@@ -41,11 +41,9 @@ data class NetworkTopAnimeData (
     @SerialName("year"            ) var year           : Long?                    = null,
     @SerialName("broadcast"       ) var networkTopAnimeBroadcast      : NetworkTopAnimeBroadcast?              = NetworkTopAnimeBroadcast(),
     @SerialName("producers"       ) var producers      : ArrayList<NetworkTopAnimeProducers>    = arrayListOf(),
-    @SerialName("licensors"       ) var licensors      : ArrayList<String>       = arrayListOf(),
     @SerialName("studios"         ) var studios        : ArrayList<NetworkTopAnimeStudios>      = arrayListOf(),
     @SerialName("genres"          ) var genres         : ArrayList<NetworkTopGenres>       = arrayListOf(),
     @SerialName("explicit_genres" ) var explicitGenres : ArrayList<String>       = arrayListOf(),
-    @SerialName("themes"          ) var themes         : ArrayList<String>       = arrayListOf(),
     @SerialName("demographics"    ) var demographics   : ArrayList<NetworkTopDemographics> = arrayListOf()
 
 )

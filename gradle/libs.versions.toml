@@ -21,21 +21,37 @@ ktor = "2.3.11"
 korio = "4.0.10"
 datastore = "1.1.1"
 koinAndroidxCompose = "3.5.3"
+androidx-navigation = "2.8.0"
+androidx-metrics = "1.0.0-beta01"
+tracing = "1.2.0"
+coil = "2.7.0"
+paging-compose = "3.3.2"
 
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+courotines-core = {module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx"}
+datetime = {module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime"}
+korio = { module = "com.soywiz.korlibs.korio:korio", version.ref = "korio" }
+
+#Android
+lifecycle-viewmodel = {module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle-compose"}
+lifecycle-runtime-compose = {module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle-compose"}
+androidx-metrics = { module = "androidx.metrics:metrics-performance", version.ref = "androidx-metrics" }
+androidx-tracing = { module = "androidx.tracing:tracing-ktx", version.ref = "tracing" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
 compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
+androidx-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
+coil-compose = { module = "io.coil-kt:coil-compose-base", version.ref = "coil" }
+paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging-compose" }
+
+
+#Material 3
 compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
-lifecycle-viewmodel = {module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle-compose"}
-lifecycle-runtime-compose = {module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle-compose"}
-courotines-core = {module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx"}
-datetime = {module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime"}
-korio = { module = "com.soywiz.korlibs.korio:korio", version.ref = "korio" }
+compose-material3-window = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "compose-material3" }
 
 #Unit Test Dependencies
 courotines-test = {module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx"}
@@ -91,6 +107,7 @@ test = ["junit",
     "test-kotlin-annotation",
     "test-kotlin-common"]
 serialization-kotlin = ["serialization-kotlin", "serialization-kotlin_core"]
+material3 = ["compose-material3", "compose-material3-window"]
 
 
 [plugins]

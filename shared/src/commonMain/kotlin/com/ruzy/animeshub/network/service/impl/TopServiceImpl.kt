@@ -1,4 +1,4 @@
-package com.ruzy.animeshub.network.datasource
+package com.ruzy.animeshub.network.service.impl
 
 import com.ruzy.animeshub.network.models.top.anime.NetworkTopAnime
 import com.ruzy.animeshub.network.service.TopService
@@ -10,9 +10,10 @@ import io.ktor.client.request.parameter
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 
-class TopDataSource(
+class TopServiceImpl(
     private val api: HttpClient
 ) : TopService {
+
     override suspend fun getTopAnime(filter: String): NetworkTopAnime =
         safeApiCall {
             api.get(urlString = "top/anime"){

@@ -1,8 +1,11 @@
 package com.ruzy.animeshub.di
 
 import com.ruzy.animeshub.database.AnimesHubDatabase
-import com.ruzy.animeshub.domain.interactor.InsertRandomAnime
-import com.ruzy.animeshub.domain.observers.ObserveAnimes
+import com.ruzy.animeshub.domain.interactor.anime.GetTopAnimeWithPage
+import com.ruzy.animeshub.domain.interactor.anime.UpdateTopAnimes
+import com.ruzy.animeshub.domain.interactor.manga.GetTopMangaWithPage
+import com.ruzy.animeshub.domain.interactor.manga.UpdateTopMangas
+import com.ruzy.animeshub.domain.observers.ObserveTopContents
 import com.ruzy.animeshub.domain.repository.TopRepository
 import com.ruzy.animeshub.domain.repository.impl.TopRepositoryImpl
 import com.ruzy.animeshub.util.AppCoroutineDispatchers
@@ -25,15 +28,20 @@ val coreModule = module {
 
     single<TopRepository> {
         TopRepositoryImpl(
-            topDataSource = get(),
+            topService = get(),
             animeQueries = get<AnimesHubDatabase>().animeQueries,
             mangaQueries = get<AnimesHubDatabase>().mangaQueries,
             imageMangaQueries = get<AnimesHubDatabase>().imageMangaQueries,
             imageAnimeQueries = get<AnimesHubDatabase>().imageAnimeQueries,
+            rankingAnimeQueries = get<AnimesHubDatabase>().rankingAnimeQueries,
+            rankingMangaQueries = get<AnimesHubDatabase>().rankingMangaQueries
         )
     }
 
     //Domains
-    single { ObserveAnimes(get()) }
-    single { InsertRandomAnime(get(), get()) }
+    single { ObserveTopContents(get()) }
+    single { UpdateTopAnimes(get(), get()) }
+    single { UpdateTopMangas(get(), get()) }
+    single { GetTopAnimeWithPage(get(), get()) }
+    single { GetTopMangaWithPage(get(), get()) }
 }

@@ -1,6 +1,6 @@
 package com.ruzy.animeshub.model.anime
 
-import com.ruzy.animeshub.db.ImageAnimeEntity
+import com.ruzy.animeshub.db.anime.ImageAnimeEntity
 
 data class ImageAnime(
     val id: Long,

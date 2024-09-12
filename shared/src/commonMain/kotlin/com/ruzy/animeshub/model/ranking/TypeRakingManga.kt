@@ -1,8 +1,11 @@
 package com.ruzy.animeshub.model.ranking
 
 enum class  TypeRakingManga (val type: String){
-    PUBLISHING("publishing"),
     UPCOMING("upcoming"),
-    BYPOPULARITY("bypopularity"),
+    BY_POPULARITY("bypopularity"),
     FAVORITE("favorite");
+
+    companion object{
+        fun getType(type: String?) = TypeRakingManga.entries.firstOrNull{it.type == type}
+    }
 }

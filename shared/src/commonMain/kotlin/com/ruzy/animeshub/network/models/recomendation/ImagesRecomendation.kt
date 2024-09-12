@@ -7,7 +7,6 @@ import kotlinx.serialization.SerialName
 @Serializable
 data class ImagesRecomendation (
 
-  @SerialName("jpg"  ) var jpgRecomendation  : JpgRecomendation?  = JpgRecomendation(),
-  @SerialName("webp" ) var webp : Webp? = Webp()
+  @SerialName("jpg"  ) var jpgRecomendation  : JpgRecomendation?  = JpgRecomendation()
 
 )

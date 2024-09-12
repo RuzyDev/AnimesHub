@@ -1,7 +1,6 @@
 package com.ruzy.animeshub.model.anime
 
-import com.ruzy.animeshub.db.AnimeEntity
-import com.ruzy.animeshub.db.GetTopAnimes
+import com.ruzy.animeshub.db.anime.GetTopAnimes
 import com.ruzy.animeshub.model.ranking.TypeRakingAnime
 
 data class AnimeDetails(

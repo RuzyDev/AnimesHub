@@ -19,4 +19,6 @@ SELECT  a.*,
         ra.ranking_value AS ranking_value
 FROM animeEntity a
 INNER JOIN rankingAnimeEntity ra ON ra.anime_id = a.id
-    WHERE ra.ranking_type = ?;
+    WHERE ra.ranking_type = ?
+ORDER BY ranking_value ASC
+LIMIT 20 OFFSET ?;

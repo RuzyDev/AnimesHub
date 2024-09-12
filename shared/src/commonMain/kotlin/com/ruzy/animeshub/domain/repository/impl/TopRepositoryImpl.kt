@@ -2,31 +2,31 @@ package com.ruzy.animeshub.domain.repository.impl
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import com.ruzy.animeshub.db.AnimeQueries
-import com.ruzy.animeshub.db.GetTopAnimes
-import com.ruzy.animeshub.db.ImageAnimeEntity
-import com.ruzy.animeshub.db.ImageAnimeQueries
-import com.ruzy.animeshub.db.ImageMangaEntity
-import com.ruzy.animeshub.db.ImageMangaQueries
-import com.ruzy.animeshub.db.MangaQueries
-import com.ruzy.animeshub.db.RankingAnimeQueries
-import com.ruzy.animeshub.db.RankingMangaQueries
+import com.ruzy.animeshub.db.anime.AnimeQueries
+import com.ruzy.animeshub.db.anime.ImageAnimeEntity
+import com.ruzy.animeshub.db.anime.ImageAnimeQueries
+import com.ruzy.animeshub.db.manga.ImageMangaEntity
+import com.ruzy.animeshub.db.manga.ImageMangaQueries
+import com.ruzy.animeshub.db.manga.MangaQueries
+import com.ruzy.animeshub.db.anime.RankingAnimeQueries
+import com.ruzy.animeshub.db.manga.RankingMangaQueries
 import com.ruzy.animeshub.domain.repository.TopRepository
 import com.ruzy.animeshub.model.anime.AnimeDetails
+import com.ruzy.animeshub.model.anime.toAnimeDetails
 import com.ruzy.animeshub.model.ranking.TypeRakingAnime
 import com.ruzy.animeshub.model.ranking.TypeRakingManga
 import com.ruzy.animeshub.model.anime.toExternalModel
 import com.ruzy.animeshub.model.manga.MangaDetails
 import com.ruzy.animeshub.model.manga.toExternalModel
 import com.ruzy.animeshub.model.manga.toMangaDetails
-import com.ruzy.animeshub.network.datasource.TopDataSource
+import com.ruzy.animeshub.network.service.TopService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class TopRepositoryImpl(
-    private val topDataSource: TopDataSource,
+    private val topService: TopService,
     private val animeQueries: AnimeQueries,
     private val mangaQueries: MangaQueries,
     private val imageMangaQueries: ImageMangaQueries,
@@ -36,7 +36,7 @@ class TopRepositoryImpl(
 ) : TopRepository {
 
     override suspend fun updateTopAnimes(type: TypeRakingAnime) {
-        val animes = topDataSource.getTopAnime(type.type)
+        val animes = topService.getTopAnime(type.type)
         val entity = animes.data
         entity.forEach {
             rankingAnimeQueries.insertOrUpdate(it.malId, type.type, it.rank)
@@ -49,7 +49,7 @@ class TopRepositoryImpl(
     }
 
     override suspend fun updateTopMangas(type: TypeRakingManga) {
-        val mangas = topDataSource.getTopAnime(type.type)
+        val mangas = topService.getTopAnime(type.type)
         val entity = mangas.data
         entity.forEach {
             rankingMangaQueries.insertOrUpdate(it.malId, type.type, it.rank)
@@ -61,37 +61,36 @@ class TopRepositoryImpl(
         }
     }
 
-    override fun observeTopAnimes(type: TypeRakingAnime): Flow<List<AnimeDetails>> =
-        animeQueries.getTopAnimes(type.type).asFlow().mapToList(Dispatchers.IO).map {
+    override suspend fun getTopAnimes(type: TypeRakingAnime, page: Long): List<AnimeDetails> =
+        animeQueries.getTopAnimes(type.type, page).executeAsList().map { anime ->
+            val images = imageAnimeQueries.getByIdAnime(anime.id).executeAsList()
+                .map(ImageAnimeEntity::toExternalModel)
+            anime.toAnimeDetails(images)
+        }
+
+    override suspend fun getTopMangas(type: TypeRakingManga, page: Long): List<MangaDetails> =
+        mangaQueries.getTopMangas(type.type, page).executeAsList().map { manga ->
+            val images = imageMangaQueries.getByIdManga(manga.id).executeAsList()
+                .map(ImageMangaEntity::toExternalModel)
+            manga.toMangaDetails(images)
+        }
+
+    override fun observeTopAnimes(type: TypeRakingAnime, page: Long): Flow<List<AnimeDetails>> =
+        animeQueries.getTopAnimes(type.type, page).asFlow().mapToList(Dispatchers.IO).map {
             it.map { anime ->
-                val images = imageAnimeQueries.getByIdAnime(it.id).executeAsList()
+                val images = imageAnimeQueries.getByIdAnime(anime.id).executeAsList()
                     .map(ImageAnimeEntity::toExternalModel)
-                mapToAnimeDetails(anime)
+                anime.toAnimeDetails(images)
             }
         }
 
-    override fun observeTopMangas(type: TypeRakingManga): Flow<List<MangaDetails>> =
-        mangaQueries.selectAll().asFlow().mapToList(Dispatchers.IO).map {
-            it.map {
-                val images = imageMangaQueries.getByIdManga(it.id).executeAsList()
+    override fun observeTopMangas(type: TypeRakingManga, page: Long): Flow<List<MangaDetails>> =
+        mangaQueries.getTopMangas(type.type, page).asFlow().mapToList(Dispatchers.IO).map {
+            it.map { manga ->
+                val images = imageMangaQueries.getByIdManga(manga.id).executeAsList()
                     .map(ImageMangaEntity::toExternalModel)
-                it.toMangaDetails(images)
+                manga.toMangaDetails(images)
             }
         }
-
-
-    fun mapToAnimeDetails(anime: GetTopAnimes): PostWithTags {
-        val postId = cursor.getLong(cursor.getColumnIndex("postId"))
-        val postTitle = cursor.getString(cursor.getColumnIndex("postTitle"))
-
-        val tags = mutableListOf<Tag>()
-        do {
-            val tagId = cursor.getLong(cursor.getColumnIndex("tagId"))
-            val tagName = cursor.getString(cursor.getColumnIndex("tagName"))
-            tags.add(Tag(tagId, tagName))
-        } while (cursor.moveToNext())
-
-        return PostWithTags(postId, postTitle, tags)
-    }
 
 }

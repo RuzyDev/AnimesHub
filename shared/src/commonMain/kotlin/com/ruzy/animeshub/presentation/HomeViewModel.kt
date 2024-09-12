@@ -1,8 +1,15 @@
 package com.ruzy.animeshub.presentation
 
-import com.ruzy.animeshub.domain.interactor.InsertRandomAnime
-import com.ruzy.animeshub.domain.observers.ObserveAnimes
-import com.ruzy.animeshub.model.anime.AnimeDetails
+import com.ruzy.animeshub.domain.interactor.anime.GetTopAnimeWithPage
+import com.ruzy.animeshub.domain.interactor.anime.UpdateTopAnimes
+import com.ruzy.animeshub.domain.interactor.manga.GetTopMangaWithPage
+import com.ruzy.animeshub.domain.interactor.manga.UpdateTopMangas
+import com.ruzy.animeshub.domain.observers.ObserveTopContents
+import com.ruzy.animeshub.domain.observers.TopContentUiState
+import com.ruzy.animeshub.model.ranking.TypeRakingAnime
+import com.ruzy.animeshub.model.ranking.TypeRakingManga
+import com.ruzy.animeshub.util.ResultState
+import com.ruzy.animeshub.util.asResultState
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -13,30 +20,37 @@ import org.koin.core.component.inject
 
 class HomeViewModel : CoroutineViewModel(), KoinComponent {
 
-    private val observeAnimes: ObserveAnimes by inject()
-    private val insertRandomAnime: InsertRandomAnime by inject()
+    private val updateTopAnimes: UpdateTopAnimes by inject()
+    private val updateTopMangas: UpdateTopMangas by inject()
+    val getTopAnimeWithPage: GetTopAnimeWithPage by inject()
+    val getTopMangaWithPage: GetTopMangaWithPage by inject()
 
     val uiState: StateFlow<HomeUiState> =
-        combine(observeAnimes.flow, insertRandomAnime.inProgress, ::HomeUiState).stateIn(
+        combine(
+            updateTopAnimes.inProgress,
+            updateTopMangas.inProgress,
+            ::HomeUiState
+        ).stateIn(
             coroutineScope,
             SharingStarted.WhileSubscribed(5000),
             HomeUiState.Empty
         )
 
-    fun randomAnime() {
+    fun refresh() {
         coroutineScope.launch {
-            insertRandomAnime.invoke(Unit)
+            updateTopAnimes.invoke(UpdateTopAnimes.Params(TypeRakingAnime.BY_POPULARITY))
+            updateTopMangas.invoke(UpdateTopMangas.Params(TypeRakingManga.BY_POPULARITY))
         }
     }
 
     init {
-        observeAnimes(Unit)
+        refresh()
     }
 }
 
 data class HomeUiState(
-    val animes: List<AnimeDetails> = emptyList(),
-    val loadingAnimes: Boolean = false
+    val loadingTopAnimes: Boolean = false,
+    val loadingTopMangas: Boolean = false
 ) {
     companion object {
         val Empty = HomeUiState()

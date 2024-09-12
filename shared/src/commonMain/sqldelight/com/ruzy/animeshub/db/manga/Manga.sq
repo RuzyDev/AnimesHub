@@ -17,6 +17,8 @@ getTopMangas:
 SELECT  a.*,
         ra.ranking_type AS ranking_type,
         ra.ranking_value AS ranking_value
-FROM animeEntity a
-INNER JOIN rankingAnimeEntity ra ON ra.anime_id = a.id
-    WHERE ra.ranking_type = ?;
+FROM mangaEntity a
+INNER JOIN rankingMangaEntity ra ON ra.manga_id = a.id
+    WHERE ra.ranking_type = ?
+ORDER BY ranking_value ASC
+LIMIT 10 OFFSET ?;
