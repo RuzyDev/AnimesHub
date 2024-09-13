@@ -5,7 +5,8 @@ import com.ruzy.animeshub.domain.interactor.anime.GetTopAnimeWithPage
 import com.ruzy.animeshub.domain.interactor.anime.UpdateTopAnimes
 import com.ruzy.animeshub.domain.interactor.manga.GetTopMangaWithPage
 import com.ruzy.animeshub.domain.interactor.manga.UpdateTopMangas
-import com.ruzy.animeshub.domain.observers.ObserveTopContents
+import com.ruzy.animeshub.domain.observers.ObserveTopAnimes
+import com.ruzy.animeshub.domain.observers.ObserveTopMangas
 import com.ruzy.animeshub.domain.repository.TopRepository
 import com.ruzy.animeshub.domain.repository.impl.TopRepositoryImpl
 import com.ruzy.animeshub.util.AppCoroutineDispatchers
@@ -38,10 +39,13 @@ val coreModule = module {
         )
     }
 
-    //Domains
-    single { ObserveTopContents(get()) }
+    //----------Domains--------------
+    //Anime
+    single { ObserveTopAnimes(get()) }
     single { UpdateTopAnimes(get(), get()) }
-    single { UpdateTopMangas(get(), get()) }
     single { GetTopAnimeWithPage(get(), get()) }
+    //Manga
+    single { ObserveTopMangas(get()) }
+    single { UpdateTopMangas(get(), get()) }
     single { GetTopMangaWithPage(get(), get()) }
 }

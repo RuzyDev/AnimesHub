@@ -4,5 +4,5 @@ import com.ruzy.animeshub.presentation.HomeViewModel
 import org.koin.dsl.module
 
 val uiModule = module {
-    single { HomeViewModel() }
+    factory { HomeViewModel() }
 }

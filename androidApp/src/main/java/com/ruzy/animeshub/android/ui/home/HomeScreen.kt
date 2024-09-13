@@ -43,10 +43,6 @@ import org.koin.compose.koinInject
 @Composable
 fun HomeRoute(viewModel: HomeViewModel = koinInject()) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val itemsPagingFlow = Pager(
-        config = PagingConfig(pageSize = 20, enablePlaceholders = false),
-        pagingSourceFactory = { TopAnimePagingSource(viewModel.getTopAnimeWithPage, TypeRakingAnime.AIRING) }
-    ).flow.cachedIn(viewModelScope)
 
     HomeScreen(
         uiState = uiState,
@@ -74,8 +70,8 @@ private fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            uiState.topContents.onSuccess {
-                items(it.animes) {
+            uiState.topAnimes.onSuccess {
+                items(it) {
                     CardAnime(it)
                 }
             }
